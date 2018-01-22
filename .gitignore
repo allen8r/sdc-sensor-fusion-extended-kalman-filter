@@ -1,0 +1,3 @@
+# ignore all under
+build/*
+.vscode/*
