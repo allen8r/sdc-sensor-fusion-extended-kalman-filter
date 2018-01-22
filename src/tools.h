@@ -29,6 +29,12 @@ public:
   */
   MatrixXd CalculateJacobian(const VectorXd& x_state);
 
+  /**
+  * Helper method to calculate h(x') function that maps predicted
+  * x' location from cartesian coordinates to polar coordinates
+  */
+  VectorXd Calculate_h_x(const VectorXd& x_state);
+
 };
 
 #endif /* TOOLS_H_ */
