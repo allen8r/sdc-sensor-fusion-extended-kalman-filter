@@ -28,7 +28,7 @@ void KalmanFilter::Predict() {
   // predict the state
   x_ = F_ * x_;
   MatrixXd Ft = F_.transpose();
-  P_ = F_ * Q_ * Ft + Q_;
+  P_ = F_ * P_ * Ft + Q_;
   cout << "P_:\n" << P_ << endl;
 }
 
@@ -58,7 +58,8 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
   cout << "KalmanFilter::UpdateEKF()..." << endl;
   cout << "z.size(): " << z.size() << endl << endl;
   cout << "h_x.size(): " << h_x.size() << endl << endl;
-  VectorXd y = z - h_x;
+  
+  VectorXd y = z - h_x; // error
   cout << "y:\n" << y << endl << endl;
   
   // Normalize angle phi
@@ -66,7 +67,11 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
   // while phi not in expected range (-PI, PI)
   // keep adding 
   while (!(phi > -M_PI && phi < M_PI)) {
-    phi += M_2_PI;
+    if (phi < -M_PI) {
+      phi += M_2_PI;
+    } else if (phi > M_PI) {
+      phi -= M_2_PI;
+    }
   }
   y[1] = phi;
 
@@ -74,7 +79,7 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
   cout << "y:\n" << y << endl << endl;
 
   MatrixXd Ht = H_.transpose();
-  cout << "Ht:\n" << Ht << endl;
+  cout << "Ht:\n" << Ht << endl << endl;
   MatrixXd S = H_ * P_ * Ht + R_;
   MatrixXd Si = S.inverse();
   MatrixXd PHt = P_ * Ht;
